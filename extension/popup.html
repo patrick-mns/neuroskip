@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>AI ad-blocker</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+  <div id="alert-container" style="display: none;">
+    <div id="alert-text"></div>
+    <div id="close-alert">
+      <i class="fas fa-times"></i>
+    </div>
+  </div>
+  <div class="clock-container">
+    <div class="radar-container">
+      <div class="radar-pulse"></div>
+      <div class="radar-pulse"></div>
+      <div class="radar-pulse"></div>
+      <div class="radar-center"></div>
+    </div>
+  </div>
+  <div id="ad-container" style="display: none;">
+    <b>AI ad-blocker <label class="tag"> Experimental </label></b>
+    <p>Automatically skip Youtube video for an uninterrupted viewing experience!</p>
+    <div class="tog-container">
+      <div class="toggle-switch">
+        <input type="checkbox" class="toggleButton" id="toggleInternalAd" />
+        <label for="toggleInternalAd" class="switch"></label>
+      </div>
+      <span>Skip Internal Ad</span>
+    </div>
+    <div id="userInfo" class="user-info">
+    </div>
+    <!-- <div style="text-align: center;">
+      <div class="input-group">
+        <span class="input-group-icon"><i class="fas fa-dollar-sign"></i></span>
+        <input type="number" id="customAmount" max="99999999" placeholder="00.00 enter the amount"
+          class="input-group-field" />
+        <b style="opacity: 0.5;">USD</b>
+      </div>
+      <button id="payBtn" class="pay-btn">
+        <i class="fab fa-stripe"></i>
+        Add Balance with Stripe
+      </button>
+    </div> -->
+  </div>
+  <div class="powered-by">
+    powered by patrick
+  </div>
+  <div class="login-container">
+    <button id="signOutButton" class="btn-l">
+      <i class="fas fa-sign-out-alt"></i>
+      Logout
+    </button>
+    <button id="signInButton" class="btn-l">
+      <i class="fab fa-google"></i>
+      Login with Google
+    </button>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,127 @@
+services:
+
+  redis:
+    image: "redis:alpine"
+    container_name: redis_cache
+    ports:
+      - "6379:6379"
+    networks:
+      - backend
+
+  postgres_db:
+    image: postgres:13 
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: neuro_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend
+
+  api:
+    build:
+      context: ./app
+      target: api
+    container_name: fastapi_app
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    ports:
+      - "8000:8000"
+      - "5678:5678"
+    volumes:
+      - ./app:/app
+    depends_on:
+      - redis
+      - postgres_db
+      - worker
+    environment:
+      - DEVELOPMENT=${DEVELOPMENT}
+      - TURNSTILE_SECRET_KEY=${TURNSTILE_SECRET_KEY}
+      - CONNECTION_STRING_POSTGRES=${CONNECTION_STRING_POSTGRES}
+      - DEBUG=${DEBUG}  
+      - DEBUG_WORKER=${DEBUG_WORKER}
+      - PYTHONUNBUFFERED=${PYTHONUNBUFFERED}  
+      - JWT_SECRET=${JWT_SECRET}
+      - SECRET_KEY=${SECRET_KEY}
+      - JWT_ALGORITHM=HS256
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - BASE_URL=${BASE_URL}
+      - REDIS_STRING=${REDIS_STRING}
+      - LOG_LEVEL=${LOG_LEVEL}
+      - TMP_DIR=${TMP_DIR}
+      - MAX_FILE_SIZE=${MAX_FILE_SIZE}
+      - AD_AI_URL=${AD_AI_URL}
+    networks:
+      - backend
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"] 
+
+  worker:
+    build:
+      context: ./app
+      target: worker
+    container_name: celery_worker
+    ports:
+      - "5680:5680"
+    volumes:
+      - ./app:/app
+    depends_on:
+      - redis
+      - postgres_db
+    environment:
+      - DEVELOPMENT=${DEVELOPMENT}
+      - TURNSTILE_SECRET_KEY=${TURNSTILE_SECRET_KEY}
+      - CONNECTION_STRING_POSTGRES=${CONNECTION_STRING_POSTGRES}
+      - DEBUG=${DEBUG}  
+      - DEBUG_WORKER=${DEBUG_WORKER}
+      - PYTHONUNBUFFERED=${PYTHONUNBUFFERED}  
+      - JWT_SECRET=${JWT_SECRET}
+      - SECRET_KEY=${SECRET_KEY}
+      - JWT_ALGORITHM=HS256
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - BASE_URL=${BASE_URL}
+      - REDIS_STRING=${REDIS_STRING}
+      - LOG_LEVEL=${LOG_LEVEL}
+      - TMP_DIR=${TMP_DIR}
+      - MAX_FILE_SIZE=${MAX_FILE_SIZE}
+      - AD_AI_URL=${AD_AI_URL}
+    networks:
+      - backend
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    mem_limit: 4g
+    mem_reservation: 2g
+    cpus: 2.0
+    command: ["python", "-m", "celery_app.worker"]
+    # command: ["watchmedo", "auto-restart", "--directory=/app", "--pattern=*.py", "--recursive", "--", "celery", "-A", "celery_app.config:celery_app", "worker", "--beat", "--loglevel=info", "--queues=default,urgent"]
+
+  flower:
+    image: mher/flower:2.0
+    container_name: flower_monitor
+    ports:
+      - "5555:5555"
+    depends_on:
+      - redis
+      - worker
+    environment:
+      - CELERY_BROKER_URL=${REDIS_STRING}
+      - FLOWER_PORT=5555
+    networks:
+      - backend
+    command: ["celery", "--broker=${REDIS_STRING}", "flower", "--port=5555"]
+
+volumes:
+  postgres_data:
+
+networks:
+  backend:
+    driver: bridge
+    enable_ipv6: true

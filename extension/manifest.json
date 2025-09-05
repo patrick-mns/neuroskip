@@ -1,0 +1,43 @@
+{
+  "manifest_version": 3,
+  "name": "AI ad-blocker",
+  "version": "0.0.1",
+  "description": "AI to automatically detect and skip video advertisements on YouTube, providing a seamless viewing experience.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage",
+    "identity",
+    "identity.email"
+  ],
+  "oauth2": {
+    "client_id": "210314114864-8cniuck5c2pk3fimf2lemvh2hir6n782.apps.googleusercontent.com",
+    "scopes": ["https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile"]
+  },
+  "host_permissions": [
+    "https://api.neuroskip.com/*",
+    "https://neuroskip.com/*",
+    "http://0.0.0.0:8000/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "logo.png",
+      "48": "logo.png",
+      "128": "logo.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.youtube.com/*"
+      ],
+      "js": [
+        "content.js"
+      ]
+    }
+  ]
+}

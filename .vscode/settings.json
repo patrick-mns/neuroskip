@@ -1,28 +1,14 @@
 {
     "files.exclude": {
-        "**/.git": true,
-        "**/.svn": true,
-        "**/.hg": true,
-        "**/.DS_Store": true,
-        "**/Thumbs.db": true,
-        ".vscode": true,
         ".github": true,
         ".gitignore": true,
-        "api/app/middlewares/__pycache__": true,
-        "api/app/__pycache__": true,
-        "api/app/routes/__pycache__": true,
-        "api/app/routes/extension/__pycache__": true,
-        "api/app/tasks/__pycache__": true
+        "**/.DS_Store": true,
+        "**/.git": true,
+        "**/.hg": true,
+        "**/.svn": true,
+        "**/Thumbs.db": true
     },
     "hide-files.files": [
-        ".vscode",
-        ".github",
-        ".gitignore",
-        "api/app/middlewares/__pycache__",
-        "api/app/__pycache__",
-        "api/app/routes/__pycache__",
-        "api/app/routes/extension/__pycache__",
-        "api/app/tasks/__pycache__"
     ],
     "python.analysis.autoImportCompletions": true,
     "python.testing.pytestArgs": [
